@@ -1,0 +1,283 @@
+/* ====== Layout utama ====== */
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* Playlist kiri */
+.playlist {
+  flex: 1;
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Player tengah */
+.player {
+  flex: 2;
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Sidebar kanan (pencarian + donasi) */
+.sidebar {
+  flex: 0 0 220px;
+  max-width: 220px;
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* ====== Header ====== */
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1e90ff;
+  color: white;
+  padding: 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo-large {
+  height: 80px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+.logo-large:hover { transform: scale(1.05); }
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+/* ====== Playlist Tabs ====== */
+.tab-btn {
+  padding: 8px 12px;
+  margin-right: 5px;
+  border: none;
+  background: #ddd;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.tab-btn.active { background: #2196f3; color: white; }
+
+.playlist-tab {
+  display: none;
+  margin-top: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+}
+.playlist-tab.show { display: block; }
+
+.playlist-item {
+  padding: 5px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+.playlist-item:hover { background: #f0f0f0; }
+
+/* ====== Player ====== */
+.player-box { position: relative; }
+#player {
+  width: 100%;
+  background: #000;
+  border-radius: 4px;
+}
+#liveIndicator {
+  position: absolute;
+  top: 10px; left: 10px;
+  background: red; color: white;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 4px;
+  display: none;
+  animation: blink 1s infinite;
+}
+@keyframes blink {
+  0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; }
+}
+.audio-placeholder {
+  display: none;
+  width: 100%; height: 300px;
+  background: #222; color: #fff;
+  font-size: 20px; font-weight: bold;
+  text-align: center; line-height: 300px;
+  border-radius: 4px;
+}
+
+/* Tombol Player */
+.play-all-btn, .stop-btn {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border: none; border-radius: 4px;
+  cursor: pointer; color: white;
+}
+.play-all-btn { background: #2196f3; }
+.stop-btn { background: #f44336; }
+
+/* ====== Live Menu ====== */
+.live-menu {
+  margin-top: 20px;
+  padding: 10px;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+.live-controls { display: flex; gap: 10px; margin-bottom: 10px; }
+.live-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background: red; color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.live-btn.stop { background: #555; }
+#liveNote { font-size: 14px; color: #333; font-style: italic; }
+
+/* ====== Search & Donasi ====== */
+.search-box, .donasi-box {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f9f9f9;
+  margin-bottom: 20px;
+}
+.donasi-box { text-align: center; background: #fff3cd; }
+.donasi-btn {
+  background: #ff9800; color: white;
+  border: none; padding: 10px 15px;
+  border-radius: 5px; cursor: pointer;
+  transition: background 0.3s ease;
+}
+.donasi-btn:hover { background: #e68900; }
+
+.search-controls { display: flex; gap: 10px; }
+.search-btn, .reset-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none; border-radius: 4px;
+  cursor: pointer; font-weight: bold;
+}
+.search-btn { background: #2196f3; color: white; }
+.reset-btn { background: #f44336; color: white; }
+
+#searchResults {
+  margin-top: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 5px;
+}
+.highlight { background: yellow; font-weight: bold; }
+
+/* ====== Modal Donasi ====== */
+.modal {
+  display: none;
+  position: fixed; z-index: 1000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+}
+.modal-content {
+  background: #fff;
+  margin: 15% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(-30px);
+  animation: fadeSlideIn 0.6s forwards;
+}
+.close { float: right; font-size: 20px; cursor: pointer; }
+
+/* Animasi fade+slide */
+@keyframes fadeSlideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* ====== PayPal Donasi ====== */
+.paypal-donasi {
+  margin-top: 15px;
+  padding: 10px;
+  border-top: 1px solid #ccc;
+}
+.paypal-donasi label {
+  display: block;
+  margin-bottom: 5px;
+}
+.paypal-donasi input {
+  width: 100%;
+  padding: 6px;
+  margin-bottom: 10px;
+}
+.donasi-btn.paypal {
+  background-color: #0070ba;
+  color: #fff;
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 992px) {
+  .sidebar { flex: 0 0 180px; max-width: 180px; }
+}
+@media (max-width: 768px) {
+  .container { flex-direction: column; }
+  .playlist, .player, .sidebar {
+    flex: none; width: 100%; margin-bottom: 20px;
+  }
+  .player-box video { width: 100%; height: auto; }
+}
+@media (max-width: 600px) {
+  .container { flex-direction: column; }
+  .sidebar { width: 100%; max-width: 100%; order: 2; }
+  .player { order: 1; }
+}
+
+/* Tombol collapse */
+.collapse-btn {
+  margin-top: 10px;
+  background: #555;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.collapse-btn:hover { background: #333; }
+
+/* Sidebar tersembunyi */
+.sidebar.collapsed {
+  width: 40px;       /* sidebar jadi kecil */
+  max-width: 40px;
+  overflow: hidden;  /* sembunyikan isi */
+  transition: all 0.3s ease;
+}
