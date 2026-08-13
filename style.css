@@ -8,13 +8,17 @@ body {
 
 .container {
   display: flex;
+  flex-direction: row;   /* pastikan horizontal */
   gap: 20px;
   align-items: flex-start;
+  justify-content: space-between;
+  min-width: 1000px;     /* biar nggak collapse jadi satu kolom di PC */
 }
 
 /* Playlist kiri */
 .playlist {
   flex: 1;
+  min-width: 250px;
   background: #fff;
   padding: 15px;
   border-radius: 8px;
@@ -24,13 +28,14 @@ body {
 /* Player tengah */
 .player {
   flex: 2;
+  min-width: 400px;
   background: #fff;
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-/* Sidebar kanan (pencarian + donasi) */
+/* Sidebar kanan */
 .sidebar {
   flex: 0 0 220px;
   max-width: 220px;
@@ -94,12 +99,53 @@ body {
 }
 .playlist-tab.show { display: block; }
 
+/* ====== Playlist Item ====== */
 .playlist-item {
-  padding: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
   cursor: pointer;
   border-bottom: 1px solid #eee;
+  font-size: 14px;
+  transition: background 0.2s ease;
 }
-.playlist-item:hover { background: #f0f0f0; }
+.playlist-item:hover { background: #e6f0ff; }
+.playlist-item svg { flex-shrink: 0; }
+
+/* Info Lagu & Durasi */
+.info {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+#durasi {
+  font-size: 14px;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* Highlight pencarian */
+.highlight {
+  background: #ffeb3b;
+  font-weight: bold;
+  color: #000;
+}
+
+/* Audio Placeholder */
+.audio-placeholder {
+  display: none;
+  width: 100%;
+  height: 300px;
+  background: #222;
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 300px;
+  border-radius: 4px;
+}
 
 /* ====== Player ====== */
 .player-box { position: relative; }
@@ -120,14 +166,6 @@ body {
 }
 @keyframes blink {
   0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; }
-}
-.audio-placeholder {
-  display: none;
-  width: 100%; height: 300px;
-  background: #222; color: #fff;
-  font-size: 20px; font-weight: bold;
-  text-align: center; line-height: 300px;
-  border-radius: 4px;
 }
 
 /* Tombol Player */
@@ -196,7 +234,6 @@ body {
   border-radius: 4px;
   padding: 5px;
 }
-.highlight { background: yellow; font-weight: bold; }
 
 /* ====== Modal Donasi ====== */
 .modal {
@@ -219,7 +256,6 @@ body {
 }
 .close { float: right; font-size: 20px; cursor: pointer; }
 
-/* Animasi fade+slide */
 @keyframes fadeSlideIn {
   from { transform: translateY(20px); opacity: 0; }
   to   { transform: translateY(0); opacity: 1; }
@@ -246,38 +282,33 @@ body {
 }
 
 /* ====== Responsive ====== */
-@media (max-width: 992px) {
-  .sidebar { flex: 0 0 180px; max-width: 180px; }
-}
 @media (max-width: 768px) {
-  .container { flex-direction: column; }
-  .playlist, .player, .sidebar {
-    flex: none; width: 100%; margin-bottom: 20px;
+  .container {
+    flex-direction: column;
+    min-width: auto;
   }
-  .player-box video { width: 100%; height: auto; }
-}
-@media (max-width: 600px) {
-  .container { flex-direction: column; }
-  .sidebar { width: 100%; max-width: 100%; order: 2; }
-  .player { order: 1; }
+  .playlist, .player, .sidebar {
+    width: 100%;
+    min-width: auto;
+    margin-bottom: 20px;
+  }
+  .player-box video { width: 100%;
+
+
+.qris-modal-content {
+  text-align: center;
 }
 
-/* Tombol collapse */
-.collapse-btn {
-  margin-top: 10px;
-  background: #555;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
+.qris-img-large {
+  width: 300px;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
 }
-.collapse-btn:hover { background: #333; }
 
-/* Sidebar tersembunyi */
-.sidebar.collapsed {
-  width: 40px;       /* sidebar jadi kecil */
-  max-width: 40px;
-  overflow: hidden;  /* sembunyikan isi */
-  transition: all 0.3s ease;
+.qris-img-large:hover {
+  transform: scale(1.05);
 }
+
+

@@ -8,40 +8,50 @@ let daftarLagu = [];
 let currentIndex = 0;
 
 // =======================
-// Ambil playlist dari server
+// Ambil playlist dari server Lazarus (/playlist)
 // =======================
-fetch("/playlist")
-  .then(res => res.json())
-  .then(data => {
-    daftarLagu = data;
-    data.forEach(file => {
-      const item = document.createElement("div");
-      item.className = "playlist-item";
+window.onload = () => {
+  fetch("/playlist")
+    .then(res => res.json())
+    .then(data => {
+      daftarLagu = [];
 
-      // Icon sesuai jenis file
-      let iconSVG = file.endsWith(".mp3")
-        ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="#2196f3"><path d="M9 17V5h2v12H9zm4 0V5h2v12h-2z"/></svg>`
-        : `<svg width="14" height="14" viewBox="0 0 24 24" fill="#2196f3"><path d="M4 4h16v16H4V4zm5 3v10l9-5-9-5z"/></svg>`;
+      // Render audio
+      audioTab.innerHTML = "";
+      data.forEach(file => {
+        if (file.startsWith("music/")) {
+          const title = file.split("/").pop();
+          const item = document.createElement("div");
+          item.className = "playlist-item";
+          item.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="#2196f3"><path d="M9 17V5h2v12H9zm4 0V5h2v12h-2z"/></svg> ${title}`;
+          item.onclick = () => playFile(file, title);
+          audioTab.appendChild(item);
+          daftarLagu.push({ url: file, title });
+        }
+      });
 
-      item.innerHTML = iconSVG + " " + file;
+      // Render video
+      videoTab.innerHTML = "";
+      data.forEach(file => {
+        if (file.startsWith("video/")) {
+          const title = file.split("/").pop();
+          const item = document.createElement("div");
+          item.className = "playlist-item";
+          item.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="#2196f3"><path d="M4 4h16v16H4V4zm5 3v10l9-5-9-5z"/></svg> ${title}`;
+          item.onclick = () => playFile(file, title);
+          videoTab.appendChild(item);
+          daftarLagu.push({ url: file, title });
+        }
+      });
 
-      // Klik item → putar
-      item.onclick = () => {
-        player.src = "/" + file;
-        player.play();
-        document.getElementById("infoLagu").innerText = file;
-        toggleLiveIndicator("active");
-      };
-
-      // Masukkan ke tab sesuai jenis
-      if (file.endsWith(".mp3")) {
-        audioTab.appendChild(item);
-      } else {
-        videoTab.appendChild(item);
+      // Auto-play lagu pertama
+      if (daftarLagu.length > 0) {
+        currentIndex = 0;
+        playFile(daftarLagu[currentIndex].url, daftarLagu[currentIndex].title);
       }
-    });
-  })
-  .catch(err => console.error("Error fetch playlist:", err));
+    })
+    .catch(err => console.error("Error load playlist:", err));
+};
 
 // =======================
 // Kontrol Player
@@ -49,23 +59,23 @@ fetch("/playlist")
 function playAll() {
   if (daftarLagu.length > 0) {
     currentIndex = 0;
-    playFile(daftarLagu[currentIndex]);
+    playFile(daftarLagu[currentIndex].url, daftarLagu[currentIndex].title);
   }
 }
 
 player.addEventListener("ended", () => {
   currentIndex++;
   if (currentIndex < daftarLagu.length) {
-    playFile(daftarLagu[currentIndex]);
+    playFile(daftarLagu[currentIndex].url, daftarLagu[currentIndex].title);
   } else {
     toggleLiveIndicator("stopped");
   }
 });
 
-function playFile(file) {
-  player.src = "/" + file;
+function playFile(url, title) {
+  player.src = url;
   player.play();
-  document.getElementById("infoLagu").innerText = file;
+  document.getElementById("infoLagu").innerText = title;
   toggleLiveIndicator("active");
 }
 
@@ -109,130 +119,84 @@ document.getElementById("searchBox").addEventListener("input", function() {
   tampilkanHasilSearch(this.value.toLowerCase());
 });
 
+
 function tampilkanHasilSearch(query) {
   const results = document.getElementById("searchResults");
   results.innerHTML = "";
 
   if (!query) return;
 
-  daftarLagu.forEach(file => {
-    if (file.toLowerCase().includes(query)) {
-      const item = document.createElement("div");
-      item.className = "playlist-item";
+  // filter dulu
+  let filtered = daftarLagu.filter(file => file.title.toLowerCase().includes(query));
 
-      // Highlight kata kunci
-      const regex = new RegExp(`(${query})`, "gi");
-      const highlighted = file.replace(regex, '<span class="highlight">$1</span>');
+  // urutkan abjad
+  filtered.sort((a, b) => a.title.localeCompare(b.title));
 
-      item.innerHTML = highlighted;
-      item.onclick = () => playFile(file);
-      results.appendChild(item);
-    }
+  filtered.forEach(file => {
+    const item = document.createElement("div");
+    item.className = "playlist-item";
+
+    const regex = new RegExp(`(${query})`, "gi");
+    const highlighted = file.title.replace(regex, '<span class="highlight">$1</span>');
+
+    item.innerHTML = highlighted;
+    item.onclick = () => playFile(file.url, file.title);
+    results.appendChild(item);
   });
 
-  if (results.innerHTML === "") {
+  if (filtered.length === 0) {
     results.innerHTML = "<p>Tidak ada hasil</p>";
   }
 }
 
-// =======================
-// Donasi Modal
-// =======================
-function openDonasi() {
-  const modal = document.getElementById("donasiModal");
+
+
+// Modal Donasi
+const modal = document.getElementById("donasiModal");
+const btnOpen = document.getElementById("openDonasi");
+const btnPaypal = document.getElementById("openPaypal");
+const closeBtn = modal.querySelector(".close");
+
+// buka modal donasi
+btnOpen.addEventListener("click", () => {
   modal.style.display = "block";
+});
 
-  // Restart animasi setiap kali dibuka
-  const content = modal.querySelector(".modal-content");
-  content.style.animation = "none";
-  content.offsetHeight; // trigger reflow
-  content.style.animation = "fadeSlideIn 0.6s forwards";
-}
+// tutup modal donasi
+closeBtn.addEventListener("click", () => {
+  modal.style.display = "none";
+});
 
-function closeDonasi() {
-  document.getElementById("donasiModal").style.display = "none";
-}
-
-async function loadPlaylist() {
-  try {
-    const res = await fetch("/playlist");
-    const data = await res.json();
-
-    // pisahkan audio & video
-    const audioDiv = document.getElementById("playlist-audio");
-    const videoDiv = document.getElementById("playlist-video");
-    audioDiv.innerHTML = "";
-    videoDiv.innerHTML = "";
-
-    data.forEach(item => {
-      if (item.endsWith(".mp3")) {
-        const btn = document.createElement("button");
-        btn.textContent = item;
-        btn.onclick = () => playMedia(item);
-        audioDiv.appendChild(btn);
-      } else {
-        const btn = document.createElement("button");
-        btn.textContent = item;
-        btn.onclick = () => playMedia(item);
-        videoDiv.appendChild(btn);
-      }
-    });
-  } catch (err) {
-    console.error("Gagal load playlist", err);
+// tutup modal donasi kalau klik luar area
+window.addEventListener("click", (event) => {
+  if (event.target === modal) {
+    modal.style.display = "none";
   }
-}
+});
 
-// panggil saat halaman load
-loadPlaylist();
+// tombol PayPal langsung redirect
+btnPaypal.addEventListener("click", () => {
+  window.open("https://paypal.me/username", "_blank");
+});
 
-function playMedia(path) {
-  const player = document.getElementById("player");
-  if (path.endsWith(".mp3")) {
-    player.style.display = "none"; // sembunyikan video
-    document.getElementById("audioPlaceholder").style.display = "block";
-    const audio = new Audio(path);
-    audio.play();
-  } else {
-    document.getElementById("audioPlaceholder").style.display = "none";
-    player.style.display = "block";
-    player.src = path;
-    player.play();
+// Modal QRIS
+const qrisModal = document.getElementById("qrisModal");
+const btnQris = document.getElementById("openQris");
+const closeQris = qrisModal.querySelector(".close");
+
+// buka modal QRIS
+btnQris.addEventListener("click", () => {
+  qrisModal.style.display = "block";
+});
+
+// tutup modal QRIS
+closeQris.addEventListener("click", () => {
+  qrisModal.style.display = "none";
+});
+
+// tutup modal QRIS kalau klik luar area
+window.addEventListener("click", (event) => {
+  if (event.target === qrisModal) {
+    qrisModal.style.display = "none";
   }
-}
-
-// Mode bisa 'sandbox' atau 'live'
-let paypalMode = "sandbox"; 
-
-function setPaypalMode(mode) {
-  paypalMode = mode;
-  updatePaypalForm();
-}
-
-function updatePaypalForm() {
-  const form = document.getElementById("paypalForm");
-  const businessInput = document.getElementById("paypalBusiness");
-
-  if (paypalMode === "sandbox") {
-    form.action = "https://www.sandbox.paypal.com/donate";
-    businessInput.value = "YOUR_SANDBOX_MERCHANT_ID"; // ganti dengan Merchant ID sandbox
-  } else {
-    form.action = "https://www.paypal.com/donate";
-    businessInput.value = "YOUR_LIVE_MERCHANT_ID"; // ganti dengan Merchant ID asli
-  }
-}
-
-// Panggil saat halaman load
-updatePaypalForm();
-
-function toggleSidebar() {
-  const sidebar = document.querySelector('.sidebar');
-  const collapseBtn = document.querySelector('.collapse-btn');
-  
-  sidebar.classList.toggle('collapsed');
-  
-  if (sidebar.classList.contains('collapsed')) {
-    collapseBtn.textContent = '➡️ Tampilkan Donasi';
-  } else {
-    collapseBtn.textContent = '⬅️ Sembunyikan Donasi';
-  }
-}
+});
