@@ -1,26 +1,34 @@
 {
   "audio": [
     {
-      "title": "Tak Ada Yang Abadi",
-      "url": "https://onedrive.live.com/download?cid=ABC123&resid=ABC123!111&authkey=!AAA111"
+      "title": "Lagu 1 - Tak Ada Yang Abadi",
+      "url": "https://onedrive.live.com/download?cid=00C0A69499843EA7&resid=00C0A69499843EA7!111&authkey=!AAA111"
     },
     {
-      "title": "Generasi Frustasi",
-      "url": "https://onedrive.live.com/download?cid=ABC123&resid=ABC123!222&authkey=!BBB222"
+      "title": "Lagu 2 - Generasi Frustasi",
+      "url": "https://onedrive.live.com/download?cid=00C0A69499843EA7&resid=00C0A69499843EA7!222&authkey=!BBB222"
     },
     {
-      "title": "Perjalanan",
-      "url": "https://onedrive.live.com/download?cid=ABC123&resid=ABC123!333&authkey=!CCC333"
+      "title": "Lagu 3 - Senja di Jakarta",
+      "url": "https://onedrive.live.com/download?cid=00C0A69499843EA7&resid=00C0A69499843EA7!333&authkey=!CCC333"
+    },
+    {
+      "title": "Lagu 4 - Malam Sunyi",
+      "url": "https://onedrive.live.com/download?cid=00C0A69499843EA7&resid=00C0A69499843EA7!444&authkey=!DDD444"
+    },
+    {
+      "title": "Lagu 5 - Jalan Panjang",
+      "url": "https://onedrive.live.com/download?cid=00C0A69499843EA7&resid=00C0A69499843EA7!555&authkey=!EEE555"
     }
   ],
   "video": [
     {
-      "title": "Konser Live",
-      "url": "https://onedrive.live.com/download?cid=ABC123&resid=ABC123!444&authkey=!DDD444"
+      "title": "Video 1 - Konser Live",
+      "url": "https://onedrive.live.com/download?cid=00C0A69499843EA7&resid=00C0A69499843EA7!666&authkey=!FFF666"
     },
     {
-      "title": "Behind The Scene",
-      "url": "https://onedrive.live.com/download?cid=ABC123&resid=ABC123!555&authkey=!EEE555"
+      "title": "Video 2 - Behind The Scene",
+      "url": "https://onedrive.live.com/download?cid=00C0A69499843EA7&resid=00C0A69499843EA7!777&authkey=!GGG777"
     }
   ]
 }
