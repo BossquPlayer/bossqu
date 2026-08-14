@@ -7,14 +7,34 @@ const player = document.getElementById("player");
 let daftarLagu = [];
 let currentIndex = 0;
 
+
 // =======================
 // Ambil playlist dari server Lazarus (/playlist)
 // =======================
 window.onload = () => {
-  fetch("/playlist")
+  fetch("/playlist.json")
     .then(res => res.json())
     .then(data => {
-      daftarLagu = [];
+      renderPlaylist("audio", data.audio);
+    renderPlaylist("video", data.video);
+  })
+  .catch(err => console.error("Gagal load playlist:", err));
+   
+
+    // render playlist ke tab
+  function renderPlaylist(type, items) {
+  const container = document.getElementById(`playlist-${type}`);
+  container.innerHTML = "";
+
+  items.forEach(item => {
+    const btn = document.createElement("button");
+    btn.textContent = item.title;
+    btn.className = "playlist-item";
+    btn.onclick = () => playMedia(item.url, type);
+    container.appendChild(btn);
+  });
+}
+     
 
       // Render audio
       audioTab.innerHTML = "";
@@ -49,7 +69,8 @@ window.onload = () => {
         currentIndex = 0;
         playFile(daftarLagu[currentIndex].url, daftarLagu[currentIndex].title);
       }
-    })
+    }
+    {
     .catch(err => console.error("Error load playlist:", err));
 };
 
@@ -200,3 +221,26 @@ window.addEventListener("click", (event) => {
     qrisModal.style.display = "none";
   }
 });
+
+
+function convertOneDriveLink(shareLink) {
+  try {
+    const url = new URL(shareLink);
+    const cid = url.searchParams.get("cid");
+    const resid = url.searchParams.get("resid");
+    const authkey = url.searchParams.get("authkey");
+    return `https://onedrive.live.com/download?cid=${cid}&resid=${resid}&authkey=${authkey}`;
+  } catch (e) {
+    alert("Link OneDrive tidak valid!");
+    return null;
+  }
+}
+
+// Tab switching
+function showTab(tab, event) {
+  document.querySelectorAll(".playlist-tab").forEach(el => el.classList.remove("show"));
+  document.getElementById(`playlist-${tab}`).classList.add("show");
+
+  document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+  event.target.classList.add("active");
+}

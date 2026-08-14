@@ -1,0 +1,40 @@
+const fs = require("fs");
+
+function convertOneDriveLink(shareLink) {
+  try {
+    const url = new URL(shareLink);
+    const cid = url.searchParams.get("cid");
+    const resid = url.searchParams.get("resid");
+    const authkey = url.searchParams.get("authkey");
+    return `https://onedrive.live.com/download?cid=${cid}&resid=${resid}&authkey=${authkey}`;
+  } catch (e) {
+    console.error("Link OneDrive tidak valid:", shareLink);
+    return null;
+  }
+}
+
+// Array link share OneDrive
+const audioLinks = [
+  { title: "Tak Ada Yang Abadi", share: "https://onedrive.live.com/?cid=ABC123&resid=ABC123!111&authkey=!AAA111" },
+  { title: "Generasi Frustasi", share: "https://onedrive.live.com/?cid=ABC123&resid=ABC123!222&authkey=!BBB222" }
+];
+
+const videoLinks = [
+  { title: "Konser Live", share: "https://onedrive.live.com/?cid=ABC123&resid=ABC123!333&authkey=!CCC333" }
+];
+
+// Convert semua link
+const playlist = {
+  audio: audioLinks.map(item => ({
+    title: item.title,
+    url: convertOneDriveLink(item.share)
+  })),
+  video: videoLinks.map(item => ({
+    title: item.title,
+    url: convertOneDriveLink(item.share)
+  }))
+};
+
+// Simpan ke playlist.json
+fs.writeFileSync("playlist.json", JSON.stringify(playlist, null, 2));
+console.log("playlist.json berhasil dibuat!");
