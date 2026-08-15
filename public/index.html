@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bossqu Media Player</title>
+  <link rel="icon" type="image/png" href="logo-bossqu.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="logo-container">
+    <img src="image/bossqulogo.jpg" alt="Bossqu Media Player Logo" class="logo-large">
+    <h1>Bossqu Media Player</h1>
+  </div>
+</header>
+
+<div class="container">
+  <!-- Playlist kiri -->
+  <aside class="playlist">
+    <h2>Playlist</h2>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('audio', event)">Audio</button>
+      <button class="tab-btn" onclick="showTab('video', event)">Video</button>
+    </div>
+    <div id="playlist-audio" class="playlist-tab show"></div>
+    <div id="playlist-video" class="playlist-tab"></div>
+  </aside>
+
+  <!-- Player tengah -->
+  <main class="player">
+    <h2>Media Player</h2>
+    <div class="player-box">
+      <video id="player" controls muted height="300"></video>
+      <div id="liveIndicator">LIVE</div>
+      <div id="audioPlaceholder" class="audio-placeholder">🎵 Audio Sedang Diputar</div>
+    </div>
+
+    <div id="infoLagu" class="info">Tidak ada media diputar</div>
+    <p id="durasi">00:00 / 00:00</p>
+
+    <button class="play-all-btn" onclick="playAll()">▶️ Play All</button>
+    <button class="stop-btn" onclick="stopPlayer()">⏹ Stop</button>
+
+    <!-- Menu Acara Live -->
+    <section class="live-menu">
+      <h2>Acara Live</h2>
+      <div class="live-controls">
+        <button class="live-btn" onclick="startLive()">🔴 Live Sekarang</button>
+        <button class="live-btn stop" onclick="stopLive()">⏹ Stop Live</button>
+      </div>
+      <p id="liveNote">Belum ada jadwal live</p>
+    </section>
+  </main>
+
+  <!-- Pencarian + Donasi kanan (vertikal) -->
+  <aside class="sidebar">
+    <div class="search-box">
+      <h2>Pencarian</h2>
+      <input type="text" id="searchBox" placeholder="🔍 Cari lagu/video...">
+      <div class="search-controls">
+        <button class="search-btn" onclick="doSearch()">Search</button>
+        <button class="reset-btn" onclick="resetSearch()">Reset</button>
+      </div>
+      <div id="searchResults"></div>
+    </div>
+
+    <div class="donasi-box">
+      <h2>Donasi</h2>
+      <p>Dukung Bossqu Media Player 🎉</p>
+      <button class="donasi-btn" onclick="openDonasi()">💰 Donasi Sekarang</button>
+      <button class="donasi-btn paypal" onclick="openPaypal()">💳 Donasi via PayPal</button>
+      <!-- Tombol collapse -->
+  <button class="collapse-btn" onclick="toggleSidebar()">⬅️ Sembunyikan Donasi</button>
+    </div>
+  </aside>
+</div>
+
+<!-- Modal Donasi -->
+<div id="donasiModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeDonasi()">&times;</span>
+    <h3>Terima Kasih!</h3>
+    <p>Rekening Donasi:</p>
+    <p><b>e-wallet Dana 085717137864 a/n Cosxxxx Bakxxxx</b></p>
+    <p>🙏 Dukungan Anda berapapun sangat berarti!</p>
+    <p>Ini akan digunakan untuk pengembangan web dan maintenance server </p>
+    <p>Untuk kontak kami di email : <b>bossqumedia@outlook.com</b></p>
+
+    <!-- Form PayPal -->
+    <div class="paypal-donasi">
+      <h3>Donasi via PayPal</h3>
+      <form id="paypalForm" method="post" target="_blank">
+        <input type="hidden" name="business" id="paypalBusiness">
+        <input type="hidden" name="currency_code" value="USD">
+        
+        <label for="donasiAmount">Nominal Donasi (USD):</label>
+        <input type="number" id="donasiAmount" name="amount" min="1" step="any" required>
+        
+        <button type="submit" class="donasi-btn paypal">💳 Donasi via PayPal</button>
+      </form>
+    </div>
+  </div>
+</div>
+  
+
+
+
+<script src="script.js"></script>
+</body>
+</html>
