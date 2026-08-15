@@ -1,0 +1,36 @@
+// Contoh fungsi di React/JS frontend Bossqu
+import { useState, useEffect } from "react";
+
+function BossquPlaylist() {
+  const [playlist, setPlaylist] = useState([]);
+
+  useEffect(() => {
+    async function loadPlaylist() {
+      try {
+        // Ganti URL ini dengan URL ngrok kamu
+        const response = await fetch("https://jaywalker-harmful-garment.ngrok-free.dev/api/playlist");
+        const data = await response.json();
+        setPlaylist(data.playlist); // sesuai struktur JSON yang kamu buat
+      } catch (error) {
+        console.error("Gagal ambil playlist:", error);
+      }
+    }
+
+    loadPlaylist();
+  }, []);
+
+  return (
+    <div>
+      <h2>Playlist</h2>
+      <ul>
+        {playlist.map(item => (
+          <li key={item.id}>
+            {item.title} ({item.type})
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default BossquPlaylist;

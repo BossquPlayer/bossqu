@@ -1,0 +1,20 @@
+function convertOneDriveLink(shareLink) {
+  // Contoh share link: https://1drv.ms/u/s!ABC123xyz
+  // Biasanya redirect ke: https://onedrive.live.com/?cid=...&resid=...&authkey=...
+  // Kita ubah jadi format download
+
+  const url = new URL(shareLink);
+  const cid = url.searchParams.get("cid");
+  const resid = url.searchParams.get("resid");
+  const authkey = url.searchParams.get("authkey");
+
+  if (!cid || !resid || !authkey) {
+    throw new Error("Link tidak valid, pastikan ambil dari OneDrive share.");
+  }
+
+  return `https://onedrive.live.com/download?cid=${cid}&resid=${resid}&authkey=${authkey}`;
+}
+
+// Contoh penggunaan:
+const shareLink = "https://onedrive.live.com/?cid=ABC123&resid=ABC123!111&authkey=!AAA111";
+console.log(convertOneDriveLink(shareLink));

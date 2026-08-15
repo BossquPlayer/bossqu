@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Playlist JSON Generator</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    textarea { width: 100%; height: 120px; margin-bottom: 10px; }
+    pre { background: #f4f4f4; padding: 10px; border-radius: 6px; }
+    button { margin-top: 10px; padding: 8px 12px; }
+    h3 { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h2>Playlist JSON Generator</h2>
+  <p>Format input: <code>Judul|Link</code> (satu baris = satu item)</p>
+
+  <h3>Audio Links</h3>
+  <textarea id="audioLinks" placeholder="Tak Ada Yang Abadi|https://onedrive.live.com/?cid=..."></textarea>
+
+  <h3>Video Links</h3>
+  <textarea id="videoLinks" placeholder="Konser Live|https://onedrive.live.com/?cid=..."></textarea>
+
+  <button onclick="generatePlaylist()">Generate JSON</button>
+
+  <h3>Hasil playlist.json:</h3>
+  <pre id="output"></pre>
+
+  <script>
+    function convertOneDriveLink(shareLink) {
+      try {
+        const url = new URL(shareLink);
+        const cid = url.searchParams.get("cid");
+        const resid = url.searchParams.get("resid");
+        const authkey = url.searchParams.get("authkey");
+        return `https://onedrive.live.com/download?cid=${cid}&resid=${resid}&authkey=${authkey}`;
+      } catch {
+        return shareLink; // fallback kalau link sudah direct
+      }
+    }
+
+    function parseLinks(text) {
+      const items = [];
+      const lines = text.trim().split("\n");
+      lines.forEach(line => {
+        const [title, share] = line.split("|");
+        if (title && share) {
+          items.push({ title: title.trim(), url: convertOneDriveLink(share.trim()) });
+        }
+      });
+      return items;
+    }
+
+    function generatePlaylist() {
+      const audio = parseLinks(document.getElementById("audioLinks").value);
+      const video = parseLinks(document.getElementById("videoLinks").value);
+
+      const playlist = { audio: audio, video: video };
+      document.getElementById("output").textContent = JSON.stringify(playlist, null, 2);
+    }
+  </script>
+</body>
+</html>

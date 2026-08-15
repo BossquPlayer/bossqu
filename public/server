@@ -1,0 +1,21 @@
+const express = require("express");
+const fs = require("fs");
+const app = express();
+const PORT = 8080;
+
+// Endpoint playlist
+app.get("/api/playlist", (req, res) => {
+  fs.readFile("playlist.json", "utf8", (err, data) => {
+    if (err) {
+      return res.status(500).json({ error: "Gagal baca file playlist" });
+    }
+    res.json(JSON.parse(data));
+  });
+});
+
+// Static file untuk media (mp3/mp4)
+app.use("/media", express.static("media"));
+
+app.listen(PORT, () => {
+  console.log(`Server jalan di http://localhost:${PORT}`);
+});
