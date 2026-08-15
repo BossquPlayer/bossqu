@@ -12,7 +12,7 @@ body {
   gap: 20px;
   align-items: flex-start;
   justify-content: space-between;
-  min-width: 1000px;     /* biar nggak collapse jadi satu kolom di PC */
+ /* min-width: 1000px;     /* biar nggak collapse jadi satu kolom di PC */
 }
 
 /* Playlist kiri */
@@ -291,13 +291,21 @@ body {
 /* ====== Responsive ====== */
 @media (max-width: 768px) {
   .container {
-    flex-direction: column;
-    min-width: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+   /* min-width: auto;*/
   }
+
   .playlist, .player, .sidebar {
+    flex: 1 1 100%;
+    min-width: 250px;
+    margin-bottom: 20px;
+  }
+
+  /*.playlist, .player, .sidebar {
     width: 100%;
     min-width: auto;
-    margin-bottom: 20px;
+    margin-bottom: 20px;*/
   }
   .player-box video { width: 100%;
 
