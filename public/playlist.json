@@ -1,0 +1,34 @@
+{
+  "audio": [
+    {
+      "title": "Lagu 1 - Tak Ada Yang Abadi",
+      "url": "./media/lagu1.mp3"
+    },
+    {
+      "title": "Lagu 2 - Generasi Frustasi",
+      "url": "./media/lagu2.mp3"
+    },
+    {
+      "title": "Lagu 3 - Senja di Jakarta",
+      "url": "./media/lagu3.mp3"
+    },
+    {
+      "title": "Lagu 4 - Malam Sunyi",
+      "url": "./media/lagu4.mp3"
+    },
+    {
+      "title": "Lagu 5 - Jalan Panjang",
+      "url": "./media/lagu5.mp3"
+    }
+  ],
+  "video": [
+    {
+      "title": "Video 1 - Konser Live",
+      "url": "./media/video1.mp4"
+    },
+    {
+      "title": "Video 2 - Behind The Scene",
+      "url": "./media/video2.mp4"
+    }
+  ]
+}
