@@ -10,10 +10,15 @@ let currentIndex = 0;
 // =======================
 // Ambil playlist dari server
 // =======================
-fetch("/playlist")
-  .then(res => res.json())
-  .then(data => {
+async function loadPlaylist() {
+  try {
+    const res = await fetch("./playlist.json"); // path aman di Vercel
+    const data = await res.json();
     daftarLagu = data;
+
+    audioTab.innerHTML = "";
+    videoTab.innerHTML = "";
+
     data.forEach(file => {
       const item = document.createElement("div");
       item.className = "playlist-item";
@@ -24,24 +29,21 @@ fetch("/playlist")
         : `<svg width="14" height="14" viewBox="0 0 24 24" fill="#2196f3"><path d="M4 4h16v16H4V4zm5 3v10l9-5-9-5z"/></svg>`;
 
       item.innerHTML = iconSVG + " " + file;
+      item.onclick = () => playFile(file);
 
-      // Klik item → putar
-      item.onclick = () => {
-        player.src = "/" + file;
-        player.play();
-        document.getElementById("infoLagu").innerText = file;
-        toggleLiveIndicator("active");
-      };
-
-      // Masukkan ke tab sesuai jenis
       if (file.endsWith(".mp3")) {
         audioTab.appendChild(item);
       } else {
         videoTab.appendChild(item);
       }
     });
-  })
-  .catch(err => console.error("Error fetch playlist:", err));
+  } catch (err) {
+    console.error("Gagal load playlist:", err);
+  }
+}
+
+// panggil saat halaman load
+loadPlaylist();
 
 // =======================
 // Kontrol Player
@@ -63,7 +65,10 @@ player.addEventListener("ended", () => {
 });
 
 function playFile(file) {
-  player.src = "/" + file;
+  player.style.display = "block";
+  document.getElementById("audioPlaceholder").style.display = "none";
+
+  player.src = file; // langsung path dari JSON
   player.play();
   document.getElementById("infoLagu").innerText = file;
   toggleLiveIndicator("active");
@@ -136,73 +141,7 @@ function tampilkanHasilSearch(query) {
 }
 
 // =======================
-// Donasi Modal
-// =======================
-function openDonasi() {
-  const modal = document.getElementById("donasiModal");
-  modal.style.display = "block";
-
-  // Restart animasi setiap kali dibuka
-  const content = modal.querySelector(".modal-content");
-  content.style.animation = "none";
-  content.offsetHeight; // trigger reflow
-  content.style.animation = "fadeSlideIn 0.6s forwards";
-}
-
-function closeDonasi() {
-  document.getElementById("donasiModal").style.display = "none";
-}
-
-async function loadPlaylist() {
-  try {
-    const res = await fetch("/playlist");
-    const data = await res.json();
-
-    // pisahkan audio & video
-    const audioDiv = document.getElementById("playlist-audio");
-    const videoDiv = document.getElementById("playlist-video");
-    audioDiv.innerHTML = "";
-    videoDiv.innerHTML = "";
-
-    data.forEach(item => {
-      if (item.endsWith(".mp3")) {
-        const btn = document.createElement("button");
-        btn.textContent = item;
-        btn.onclick = () => playMedia(item);
-        audioDiv.appendChild(btn);
-      } else {
-        const btn = document.createElement("button");
-        btn.textContent = item;
-        btn.onclick = () => playMedia(item);
-        videoDiv.appendChild(btn);
-      }
-    });
-  } catch (err) {
-    console.error("Gagal load playlist", err);
-  }
-}
-
-// panggil saat halaman load
-loadPlaylist();
-
-function playMedia(path) {
-  const player = document.getElementById("player");
-  if (path.endsWith(".mp3")) {
-    player.style.display = "none"; // sembunyikan video
-    document.getElementById("audioPlaceholder").style.display = "block";
-    const audio = new Audio(path);
-    audio.play();
-  } else {
-    document.getElementById("audioPlaceholder").style.display = "none";
-    player.style.display = "block";
-    player.src = path;
-    player.play();
-  }
-}
-
-
-// =======================
-// Modal Donasi
+// Modal Donasi & QRIS
 // =======================
 const donasiModal = document.getElementById("donasiModal");
 const qrisModal = document.getElementById("qrisModal");
@@ -240,11 +179,9 @@ btnOpenPaypal.addEventListener("click", () => {
   window.open("https://paypal.me/username", "_blank");
 });
 
-
-
-// Panggil saat halaman load
-updatePaypalForm();
-
+// =======================
+// Sidebar toggle
+// =======================
 function toggleSidebar() {
   const sidebar = document.querySelector('.sidebar');
   const collapseBtn = document.querySelector('.collapse-btn');
