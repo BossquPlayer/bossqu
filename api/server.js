@@ -33,9 +33,15 @@ generatePlaylist();
 setInterval(generatePlaylist, 60 * 1000);
 
 // Endpoint API
+app.get("/playlist", (req, res) => {
+  res.json(daftarLagu); // atau playlistCache
+});
+
+// kalau mau pakai /api/playlist
 app.get("/api/playlist", (req, res) => {
   res.json(playlistCache);
 });
+
 
 // Serve file statis
 app.use("/music", express.static(musicDir));
@@ -45,3 +51,6 @@ app.use("/", express.static("D:/FM/public"));
 app.listen(PORT, () => {
   console.log(`Server jalan di http://localhost:${PORT}`);
 });
+
+
+
