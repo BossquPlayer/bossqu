@@ -12,7 +12,7 @@ let currentIndex = 0;
 // =======================
 async function loadPlaylist() {
   try {
-    const res = await fetch("/playlist");
+    const res = await fetch("https://animating-impose-dean.ngrok-free.dev/api/playlist");
     const data = await res.json();
     daftarLagu = data;
 
