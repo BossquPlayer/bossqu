@@ -126,51 +126,10 @@ function playFile(file) {
 // =======================
 // Users API
 // =======================
-async function loadUsers() {
-  if (!API_BASE) return;
-  try {
-    // ⚠️ Pastikan endpoint ini benar. Kalo di Lazarus cuma '/users', hapus '/api/'
-    const res = await fetch(`\${API_BASE}/api/users`);
-    
-    if (!res.ok) throw new Error(`Users API error: \${res.status}`);
 
-    const data = await res.json();
-    const list = document.getElementById("users");
-    
-    if (!list) {
-      console.warn("Element 'users' tidak ditemukan, skip load users.");
-      return;
-    }
 
-    list.innerHTML = "";
 
-    if (!data || data.length === 0) {
-      list.innerHTML = "<li>Tidak ada user.</li>";
-      return;
-    }
 
-    data.forEach(user => {
-      const li = document.createElement("li");
-      // Handle kalo user cuma string atau object
-      const userText = typeof user === 'object' ? `${user.id} - ${user.name}` : user;
-      li.textContent = userText;
-      list.appendChild(li);
-    });
-  } catch (err) {
-    console.error("❌ Gagal load users:", err);
-    // Jangan crash app, cuma log error
-  }
-}
-
-// =======================
-// Live Indicator
-// =======================
-function toggleLiveIndicator(state) {
-  const liveEl = document.getElementById("liveIndicator");
-  if (liveEl) {
-    liveEl.style.display = (state === "active") ? "block" : "none";
-  }
-}
 
 // =======================
 // Init
