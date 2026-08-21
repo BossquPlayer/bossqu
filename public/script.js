@@ -10,7 +10,7 @@ let currentIndex = 0;
 // =======================
 // Ambil playlist dari server
 // =======================
-fetch("/api/playlist")
+fetch("https://animating-impose-dean.ngrok-free.dev/api/playlist")
   .then(res => res.json())
   .then(data => {
     // gabungkan audio + video ke daftarLagu
