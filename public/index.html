@@ -39,8 +39,24 @@
     <div id="infoLagu" class="info">Tidak ada media diputar</div>
     <p id="durasi">00:00 / 00:00</p>
 
-    <button class="play-all-btn" onclick="playAll()">▶️ Play All</button>
-    <button class="stop-btn" onclick="stopPlayer()">⏹ Stop</button>
+
+<!-- Baris 1: tombol utama -->
+<div class="player-controls-main">
+  <button class="play-all-btn" onclick="playAll()" title="Play All">▶️</button>
+  <button class="stop-btn" onclick="stopPlayer()" title="Stop">⏹</button>
+</div>
+
+<!-- Baris 2: tombol tambahan -->
+<div class="player-controls-extra">
+  <button class="repeat-btn" onclick="toggleRepeat()" title="Repeat Playlist">🔁</button>
+  <button class="shuffle-btn" onclick="shufflePlaylist()" title="Shuffle">🔀</button>
+  <button class="repeat-single-btn" onclick="toggleRepeatSingle()" title="Repeat Single Track">🔂</button>
+  <button class="prev-btn" onclick="prevTrack()" title="Previous Track">⏮</button>
+  <button class="next-btn" onclick="nextTrack()" title="Next Track">⏭</button>
+</div>
+
+
+
 
     <!-- Menu Acara Live -->
     <section class="live-menu">
@@ -51,10 +67,21 @@
       </div>
       <p id="liveNote">Belum ada jadwal live</p>
     </section>
+
+    <!-- User List dari API -->
+    <section class="user-list">
+      <h2>Daftar Users</h2>
+      <ul id="users"></ul>
+
+      <h3>Tambah User</h3>
+      <input type="text" id="newUserName" placeholder="Nama user...">
+      <button onclick="addUser()">Tambah</button>
+    </section>
   </main>
 
-  <!-- Pencarian + Donasi kanan -->
+  <!-- Sidebar kanan -->
   <aside class="sidebar">
+    <!-- Pencarian -->
     <div class="search-box">
       <h2>Pencarian</h2>
       <input type="text" id="searchBox" placeholder="🔍 Cari lagu/video...">
@@ -65,50 +92,48 @@
       <div id="searchResults"></div>
     </div>
 
-
-   <div class="donasi-box">
-  <h2>Donasi</h2>
-  <p>Dukung Bossqu Media Player 🎉</p>
-  <button class="donasi-btn" id="openDonasi">💰 Donasi Sekarang</button>
-  <button class="donasi-btn paypal" id="openPaypal">💳 Donasi via PayPal</button>
-  <button class="collapse-btn" onclick="toggleSidebar()">⬅️ Sembunyikan Donasi</button>
-</div>
-
-<!-- Modal Donasi -->
-<div id="donasiModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h3>Terima Kasih!</h3>
-    <p>Rekening Donasi:</p>
-    <p><b>e-wallet Dana 085717137864 a/n Cosxxxx Bakxxxx</b></p>
-    <p>🙏 Dukungan Anda berapapun sangat berarti!</p>
-    <p>Ini akan digunakan untuk pengembangan web dan maintenance server</p>
-    <p>Kontak: <b>bossqumedia@outlook.com</b></p>
-
-    <!-- QRIS Donasi -->
-    <div class="qris-donasi">
-      <p>Donasi via QRIS:</p>
-      <button class="donasi-btn" id="openQris">📱 Lihat QRIS</button>
+    <!-- Donasi -->
+    <div class="donasi-box">
+      <h2>Donasi</h2>
+      <p>Dukung Bossqu Media Player 🎉</p>
+      <button class="donasi-btn" id="openDonasi">💰 Donasi Sekarang</button>
+      <button class="donasi-btn paypal" id="openPaypal">💳 Donasi via PayPal</button>
+      <button class="collapse-btn" onclick="toggleSidebar()">⬅️ Sembunyikan Donasi</button>
     </div>
-
-    <!-- PayPal Donasi -->
-    <div class="paypal-donasi">
-      <p>Donasi via PayPal:</p>
-      <a class="donasi-btn paypal" href="https://paypal.me/username" target="_blank">
-        Donasi via PayPal
-      </a>
-    </div>
-  </div>
+  </aside>
 </div>
 
-<!-- Modal QRIS khusus -->
-<div id="qrisModal" class="modal">
-  <div class="modal-content qris-modal-content">
-    <span class="close">&times;</span>
-    <h3>Scan QRIS Bossqu Media Player</h3>
-    <img src="image/qris.png" alt="QRIS Bossqu Media Player" class="qris-img-large">
-  </div>
-</div>
+<!-- Script API -->
+<script>
+  async function loadUsers() {
+    const res = await fetch("/api/users");
+    const data = await res.json();
+    const list = document.getElementById("users");
+    list.innerHTML = "";
+    data.forEach(user => {
+      const li = document.createElement("li");
+      li.textContent = `${user.id} - ${user.name}`;
+      list.appendChild(li);
+    });
+  }
+
+  async function addUser() {
+    const name = document.getElementById("newUserName").value;
+    if (!name) return alert("Isi nama dulu!");
+    const res = await fetch("/api/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name })
+    });
+    await res.json();
+    document.getElementById("newUserName").value = "";
+    loadUsers();
+  }
+
+  // Load users saat halaman dibuka
+  loadUsers();
+</script>
+
 
 
 <script src="script.js"></script>

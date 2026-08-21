@@ -281,3 +281,84 @@ body {
   overflow: hidden;  /* sembunyikan isi */
   transition: all 0.3s ease;
 }
+
+
+/* User List Section */
+.user-list {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f9f9f9;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+}
+
+.user-list h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.user-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px 0;
+}
+
+.user-list ul li {
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.user-list ul li:hover {
+  background: #e6f7ff;
+}
+
+.user-list input {
+  padding: 8px;
+  width: 70%;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  margin-right: 10px;
+}
+
+.user-list button {
+  padding: 8px 12px;
+  background: #0070f3;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+
+.player-controls-main,
+.player-controls-extra {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.player-controls-main button,
+.player-controls-extra button {
+  margin: 4px;
+  padding: 6px;
+  font-size: 18px;   /* ikon jelas */
+  min-width: 40px;   /* tombol compact */
+  cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
