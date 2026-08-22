@@ -1,22 +1,22 @@
 import { google } from "googleapis";
 
 export default async function handler(req, res) {
-  // 1. DAPATIN ID FOLDER DARI ENV VAR (Jangan lupa tambahin ini di Vercel!)
+  // 1. DAPATIN ID FOLDER DARI ENV VAR
   const audioFolderId = process.env.AUDIO_FOLDER_ID;
   const videoFolderId = process.env.VIDEO_FOLDER_ID;
 
   if (!audioFolderId || !videoFolderId) {
     return res.status(500).json({ 
-      error: "Missing folder IDs. Please add AUDIO_FOLDER_ID and VIDEO_FOLDER_ID to Vercel Environment Variables." 
+      error: "Missing folder IDs. Please add AUDIO_FOLDER_ID and VIDEO_FOLDER_ID to Vercel Env." 
     });
   }
 
   try {
-    // 2. AUTH PAKAI ENV VAR (Gak pake file credentials.json lagi)
+    // 2. AUTH PAKAI ENV VAR (Gak pake file lagi)
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: process.env.GOOGLE_CLIENT_EMAIL,
-        // Penting: .replace(/\\n/g, "\n") buat ngelurusin format key yang di-copy paste ke Vercel
+        // Penting: .replace(/\\n/g, "\n") buat ngelurusin format key
         private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"), 
       },
       scopes: ["https://www.googleapis.com/auth/drive.readonly"],
@@ -24,38 +24,53 @@ export default async function handler(req, res) {
 
     const drive = google.drive({ version: "v3", auth });
 
-    // 3. LOGIKA AMBIL FILE (Bisa digabung atau dipisah, tergantung kebutuhan)
-    // Contoh ambil file dari folder audio
-    const audioFiles = await drive.files.list({
-      q: `'\${audioFolderId}' in parents and trashed = false`,
-      fields: "files(id, name, webContentLink, mimeType)",
-      pageSize: 100,
-    });
+    // 3. FUNGSI BANTUAN BIAR KODENYA RAPI
+    const getFiles = async (folderId, type) => {
+      const res = await drive.files.list({
+        q: `'\${folderId}' in parents and trashed = false`,
+        fields: "files(id, name, mimeType, owners(emailAddress))",
+        pageSize: 1000,
+      });
 
-    // Contoh ambil file dari folder video
-    const videoFiles = await drive.files.list({
-      q: `'\${videoFolderId}' in parents and trashed = false`,
-      fields: "files(id, name, webContentLink, mimeType)",
-      pageSize: 100,
-    });
+      return res.data.files.map((file) => {
+        const ownerEmail = file.owners?.?.emailAddress || "Unknown";
+        return {
+          id: file.id,
+          title: file.name,
+          type: type, // 'audio' atau 'video'
+          mimeType: file.mimeType,
+          ownerEmail: ownerEmail,
+          // URL download langsung dari Drive
+          url: `https://drive.google.com/uc?export=download&id=\${file.id}`,
+        };
+      });
+    };
 
-    // Gabungin hasilnya jadi satu JSON
-    const allFiles = [
-      ...(audioFiles.data.files || []),
-      ...(videoFiles.data.files || [])
-    ];
+    // 4. AMBIL FILE AUDIO DAN VIDEO
+    const audioFiles = await getFiles(audioFolderId, "audio");
+    const videoFiles = await getFiles(videoFolderId, "video");
 
+    // 5. KIRIM RESPONSE FINAL
     res.status(200).json({
       success: true,
-      count: allFiles.length,
-      files: allFiles,
+      data: {
+        audio: audioFiles,
+        video: videoFiles,
+        total: audioFiles.length + videoFiles.length,
+      },
     });
 
   } catch (err) {
-    console.error("Error fetching files:", err);
-    res.status(500).json({ 
-      error: "Failed to fetch files from Google Drive", 
-      details: err.message 
+    console.error("Error fetching playlist:", err.message);
+    
+    let message = "Internal server error";
+    if (err.message.includes("404")) message = "Folder ID not found or invalid";
+    if (err.message.includes("403")) message = "Service account not authorized (check sharing)";
+    
+    res.status(500).json({
+      success: false,
+      error: message,
+      details: err.message,
     });
   }
 }
