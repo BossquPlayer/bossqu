@@ -7,19 +7,14 @@ const player = document.getElementById("player");
 let daftarLagu = [];
 let currentIndex = 0;
 
-// ⚠️ FIX: Baca dari variable global atau fallback
-// Kalo kamu set variable di Vercel Settings, biasanya ga langsung muncul di window.
-// Solusi terbaik untuk vanilla JS: hardcode URL di sini (sementara) atau baca dari data-attribute di HTML.
-// Disini aku kasih fallback ke URL kamu.
-
-// Cara 1 (Recommended untuk Vanilla JS): Hardcode URL di sini (ganti ke URL API kamu)
+// ⚠️ FIX: Hardcode URL API di sini (Ganti ini ke URL API kamu yang bener!)
+// Contoh: https://bossqu-api.vercel.app/api
 let API_BASE = "https://bossqu-api.vercel.app/api"; 
 
-// Cara 2 (Advanced): Kalo mau baca dari HTML, buka index.html dan tambahin:
-// <body data-api-base="https://bossqu-api.vercel.app/api">
-// Lalu uncomment baris di bawah ini:
+// Optional: Kalo mau baca dari HTML data-attribute, uncomment baris di bawah:
 // const html = document.documentElement;
-// API_BASE = html.getAttribute('data-api-base') || API_BASE;
+// const fromHtml = html.getAttribute('data-api-base');
+// if (fromHtml) API_BASE = fromHtml;
 
 console.log("🚀 API_BASE yang dipakai:", API_BASE);
 
@@ -27,16 +22,22 @@ console.log("🚀 API_BASE yang dipakai:", API_BASE);
 // Load Playlist
 // =======================
 async function loadPlaylist() {
-  if (!API_BASE) {
-    console.error("API_BASE tidak didefinisikan!");
-    alert("Error: Backend tidak terhubung.");
+  if (!API_BASE || API_BASE === "undefined") {
+    console.error("❌ API_BASE tidak didefinisikan!");
+    alert("Error: Backend tidak terhubung. Cek console.");
     return;
   }
 
+  // ⚠️ FIX: Pastikan pake backtick (`) bukan petik biasa (")
+  const url = `\${API_BASE}/playlist`;
+  console.log("📡 Fetching playlist dari:", url);
+
   try {
-    const res = await fetch(`\${API_BASE}/playlist`);
+    const res = await fetch(url);
     
-    if (!res.ok) throw new Error(`HTTP Error: \${res.status}`);
+    if (!res.ok) {
+      throw new Error(`HTTP Error: \${res.status}`);
+    }
     
     const data = await res.json();
     daftarLagu = data;
@@ -45,7 +46,7 @@ async function loadPlaylist() {
     const videoDiv = document.getElementById("playlist-video");
     
     if (!audioDiv || !videoDiv) {
-      console.error("Element playlist tidak ditemukan!");
+      console.error("❌ Element playlist tidak ditemukan!");
       return;
     }
 
@@ -76,23 +77,26 @@ async function loadPlaylist() {
   } catch (err) {
     console.error("❌ Error fetch playlist:", err);
     const errorDiv = document.getElementById("playlist-audio") || document.body;
-    errorDiv.innerHTML = `<p style="color:red">Gagal muat playlist. Cek Console (F12).<br>
+    errorDiv.innerHTML = `<p style="color:red">Gagal muat playlist.<br>
+    Cek Console (F12) untuk detail error.<br>
     Pastikan API_BASE benar dan backend jalan.</p>`;
   }
 }
 
 function playFile(file) {
-  player.src = `${API_BASE}/${file}`;
+  // ⚠️ Pastikan path ini sesuai dengan backend kamu
+  const src = `${API_BASE}/${file}`;
+  console.log("▶️ Play file:", src);
   
+  player.src = src;
   player.play().catch(e => {
     console.error("Gagal play:", e);
-    alert("Gagal memutar file.");
+    alert("Gagal memutar file. Cek console.");
   });
 
   const infoEl = document.getElementById("infoLagu");
   if (infoEl) infoEl.innerText = file;
   
-  // Pastikan fungsi ini ada di script.js atau di file lain
   if (typeof toggleLiveIndicator === 'function') {
     toggleLiveIndicator("active");
   }
