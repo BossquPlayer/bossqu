@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
   if (!audioFolderId || !videoFolderId) {
     return res.status(500).json({ 
-      error: "Missing folder IDs. Please add AUDIO_FOLDER_ID and VIDEO_FOLDER_ID to Vercel Env." 
+      error: "Missing folder IDs. Check Vercel Env Var." 
     });
   }
 
@@ -37,10 +37,9 @@ export default async function handler(req, res) {
         return {
           id: file.id,
           title: file.name,
-          type: type, // 'audio' atau 'video'
+          type: type,
           mimeType: file.mimeType,
           ownerEmail: ownerEmail,
-          // URL download langsung dari Drive
           url: `https://drive.google.com/uc?export=download&id=\${file.id}`,
         };
       });
