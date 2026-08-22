@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       client_email: clientEmail,
       private_key_id: privateKeyId,
       private_key: privateKey,
-      project_id: "dummy-project-id", // Boleh kosong, ga wajib
+      project_id: "dummy-project-id", 
       auth_uri: "https://accounts.google.com/o/oauth2/auth",
       token_uri: "https://oauth2.googleapis.com/token",
     };
@@ -33,14 +33,15 @@ export default async function handler(req, res) {
 
     const drive = google.drive({ version: "v3", auth });
 
-    // 3. MASUKKIN ID FOLDER GOOGLE DRIVE DI SINI!
-    // Ganti ini dengan ID folder audio dan video kamu
-    const audioFolderId = "1K3Wl1lMlIia-Bwojq7zXghdNE3BbMUmO?usp=sharing"; 
-    const videoFolderId = "1xe_8lg3JGwsyY91HEhkOZ7AiMzRpM_rO?usp=drive_link";
+    // 3. MASUKKIN ID FOLDER GOOGLE DRIVE DI SINI! (Hanya ID, tanpa ?usp...)
+    // ⚠️ PENTING: Hapus semua tulisan setelah ID (?usp=sharing, dll)
+    const audioFolderId = "1K3Wl1lMlIia-Bwojq7zXghdNE3BbMUmO"; 
+    const videoFolderId = "1xe_8lg3JGwsyY91HEhkOZ7AiMzRpM_rO";
 
-    if (audioFolderId === "YOUR_AUDIO_FOLDER_ID" || videoFolderId === "YOUR_VIDEO_FOLDER_ID") {
+    // Perbaikan: Cek apakah ID kosong, bukan bandingin sama string lama
+    if (!audioFolderId || !videoFolderId) {
        return res.status(500).json({ 
-        error: "Tolong ganti YOUR_AUDIO_FOLDER_ID dan YOUR_VIDEO_FOLDER_ID di kode ini!" 
+        error: "Tolong masukkan ID Folder Audio dan Video di kode ini!" 
       });
     }
 
@@ -53,6 +54,7 @@ export default async function handler(req, res) {
       
       return res.data.files.map(f => ({
         title: f.name,
+        // Link download langsung dari Google Drive
         url: `https://drive.google.com/uc?export=download&id=${f.id}`,
         type: type,
         mimeType: f.mimeType
@@ -65,7 +67,7 @@ export default async function handler(req, res) {
       getFiles(videoFolderId, "video")
     ]);
 
-    // 4. Tambah Header CORS (Wajib buat Vercel biar frontend bisa ngomong ke API)
+    // 4. Tambah Header CORS (Wajib buat Vercel)
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -87,7 +89,7 @@ export default async function handler(req, res) {
     
     let message = "Gagal ambil playlist dari Google Drive";
     if (err.code === 403) message = "Permission Denied! Service Account kamu belum diinvite ke folder.";
-    if (err.code === 404) message = "Folder ID salah. Cek lagi ID folder kamu.";
+    if (err.code === 404) message = "Folder ID salah. Cek lagi ID folder kamu (pastikan tanpa ?usp)";
 
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.status(500).json({ error: message });
