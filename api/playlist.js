@@ -35,8 +35,8 @@ export default async function handler(req, res) {
 
     // 3. MASUKKIN ID FOLDER GOOGLE DRIVE DI SINI!
     // Ganti ini dengan ID folder audio dan video kamu
-    const audioFolderId = "YOUR_AUDIO_FOLDER_ID"; 
-    const videoFolderId = "YOUR_VIDEO_FOLDER_ID";
+    const audioFolderId = "1K3Wl1lMlIia-Bwojq7zXghdNE3BbMUmO?usp=sharing"; 
+    const videoFolderId = "1xe_8lg3JGwsyY91HEhkOZ7AiMzRpM_rO?usp=drive_link";
 
     if (audioFolderId === "YOUR_AUDIO_FOLDER_ID" || videoFolderId === "YOUR_VIDEO_FOLDER_ID") {
        return res.status(500).json({ 
