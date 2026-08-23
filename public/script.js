@@ -22,14 +22,21 @@ console.log("📡 API_BASE Target:", API_BASE);
 // =======================
 
 async function loadPlaylist() {
+  // Karena API ini di repo yang sama, kita pake path relative
+  const url = '/api/get-playlist'; 
+  
+  console.log("📡 Mencoba fetch ke:", url);
+
   try {
-    // 1. Sekarang kita fetch langsung ke file statis di public/
-    const res = await fetch('/playlist.json'); 
+    const res = await fetch(url);
     
-    if (!res.ok) throw new Error(`HTTP \${res.status}`);
-    
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`HTTP ${res.status}: ${errText}`);
+    }
+
     const data = await res.json();
-    console.log("✅ Data playlist berhasil dimuat:", data);
+    console.log("✅ Playlist dari Google Drive:", data);
     daftarLagu = data;
 
     const audioDiv = document.getElementById("playlist-audio");
@@ -44,14 +51,13 @@ async function loadPlaylist() {
     videoDiv.innerHTML = "";
 
     if (!data || data.length === 0) {
-      audioDiv.innerHTML = "<p>Playlist kosong.</p>";
+      audioDiv.innerHTML = "<p>Playlist kosong di Google Drive.</p>";
       return;
     }
 
     data.forEach(item => {
-      // 2. Karena JSON kamu punya {title, url}, kita ambil title buat nama item
-      const displayName = item.title || item.name || item.filename;
-      const fileUrl = item.url; // Ini yang dipake buat play
+      const displayName = item.title;
+      const fileUrl = item.url; // Ini langsung link download dari Google Drive
       
       const element = document.createElement("div");
       element.className = "playlist-item";
@@ -60,12 +66,11 @@ async function loadPlaylist() {
       element.style.padding = "8px";
       element.style.borderBottom = "1px solid #eee";
       
-      // 3. Saat diklik, kita lewatkan URL file langsung ke fungsi play
       element.onclick = () => playFile(fileUrl);
 
-      // Cek ekstensi dari URL atau title untuk pisah audio/video
-      const isAudio = displayName.endsWith(".mp3") || displayName.endsWith(".wav") || fileUrl.endsWith(".mp3");
-      const isVideo = displayName.endsWith(".mp4") || displayName.endsWith(".webm") || fileUrl.endsWith(".mp4");
+      // Cek ekstensi dari title
+      const isAudio = displayName.toLowerCase().endsWith(".mp3") || displayName.toLowerCase().endsWith(".wav");
+      const isVideo = displayName.toLowerCase().endsWith(".mp4") || displayName.toLowerCase().endsWith(".webm");
 
       if (isAudio) {
         audioDiv.appendChild(element);
@@ -77,11 +82,10 @@ async function loadPlaylist() {
     });
 
   } catch (err) {
-    console.error("❌ Kesalahan saat load playlist:", err);
-    showError(`Gagal muat playlist: \${err.message}. Cek Console (F12).`);
+    console.error("❌ Kesalahan load playlist:", err);
+    showError(`Gagal muat playlist: \${err.message}. Cek Logs Vercel!`);
   }
 }
-
 
 
 function showError(message) {
